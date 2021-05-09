@@ -2,12 +2,6 @@ type Error =
 | AdminValidationFailed
 | StagingAdminNotExist
 | StagingAdminValidationFailed
-| WrongTokenImplementationAddress
-| ICOHasEnded
-| ICODidNotEndYet
-| FundingGoalNotReached
-| FundingGoalReached
-| ThisIsNotTokenRecipient
 
 let make_error =
 fun (result: Error) =>
@@ -16,17 +10,9 @@ match result with
 | AdminValidationFailed => Int32 -1
 | StagingAdminNotExist => Int32 -2
 | StagingAdminValidationFailed => Int32 -3
-| WrongTokenImplementationAddress => Int32 -4
-| ICOHasEnded => Int32 -5
-| ICODidNotEndYet => Int32 -6
-| FundingGoalNotReached => Int32 -7
-| FundingGoalReached => Int32 -8
-| ThisIsNotTokenRecipient => Int32 -9
 end
 in
 { _exception: "Error"; code: result_code }
-
-let transfer_tag = "Transfer"
 
 let addfunds_tag = "AddFunds"
 
@@ -34,5 +20,3 @@ let one_msg =
 fun (m : Message) =>
 let e = Nil {Message} in
 Cons {Message} m e
-
-let zero = Uint128 0
