@@ -6,14 +6,11 @@ library ICOContract
     Error,
     make_error,
     one_msg,
-    addfunds_tag
+    addfunds_tag,
+    uint128_list_head,
+    uint128_list_tail,
+    nil_uint128
 } from "./lib/ICOContract.scillib"
-
-let bool_true = True
-
-let uint128_list_head = @list_head Uint128
-let uint128_list_tail = @list_tail Uint128
-let nil_uint128 = Nil {Uint128}
 
 contract ICOContract(
     init_admin: ByStr20

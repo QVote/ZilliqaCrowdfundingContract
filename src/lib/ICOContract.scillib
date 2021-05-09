@@ -26,3 +26,9 @@ let one_msg =
 fun (m : Message) =>
 let e = Nil {Message} in
 Cons {Message} m e
+
+let uint128_list_head = @list_head Uint128
+
+let uint128_list_tail = @list_tail Uint128
+
+let nil_uint128 = Nil {Uint128}

@@ -31,10 +31,10 @@ Cons {Message} m e
 
 let addfunds_tag = "AddFunds"
 
-let bool_true = True
-
 let uint128_list_head = @list_head Uint128
+
 let uint128_list_tail = @list_tail Uint128
+
 let nil_uint128 = Nil {Uint128}
 
 contract ICOContract(
