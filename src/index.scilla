@@ -1,6 +1,6 @@
 scilla_version 0
 import ListUtils IntUtils PairUtils
-library ICOContract
+library Crowdfunding
 
 @import {
     Error,
@@ -10,9 +10,9 @@ library ICOContract
     uint128_list_head,
     uint128_list_tail,
     nil_uint128
-} from "./lib/ICOContract.scillib"
+} from "./lib/Crowdfunding.scillib"
 
-contract ICOContract(
+contract Crowdfunding(
     init_admin: ByStr20
 )
 (* Current contract admin *)
