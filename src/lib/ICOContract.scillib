@@ -2,6 +2,9 @@ type Error =
 | AdminValidationFailed
 | StagingAdminNotExist
 | StagingAdminValidationFailed
+| ProjectNotRegistered
+| BeneficiaryPaymentsExhausted
+| BeneficiaryAlreadyRegistered
 
 let make_error =
 fun (result: Error) =>
@@ -10,6 +13,9 @@ match result with
 | AdminValidationFailed => Int32 -1
 | StagingAdminNotExist => Int32 -2
 | StagingAdminValidationFailed => Int32 -3
+| ProjectNotRegistered => Int32 -4
+| BeneficiaryPaymentsExhausted => Int32 -5
+| BeneficiaryAlreadyRegistered => Int32 -6
 end
 in
 { _exception: "Error"; code: result_code }

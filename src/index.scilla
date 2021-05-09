@@ -11,6 +11,10 @@ library ICOContract
 
 let bool_true = True
 
+let uint128_list_head = @list_head Uint128
+let uint128_list_tail = @list_tail Uint128
+let nil_uint128 = Nil {Uint128}
+
 contract ICOContract(
     init_admin: ByStr20
 )
@@ -18,6 +22,8 @@ contract ICOContract(
 field contractadmin: ByStr20  = init_admin
 (* Admin that can be claimed by existing address *)
 field stagingcontractadmin: Option ByStr20 = None {ByStr20}
+(* Registered projects and their payments *)
+field beneficiary_to_payments: Map ByStr20 (List Uint128) = Emp ByStr20 (List Uint128)
 
 procedure ThrowError(err: Error)
     e = make_error err;
@@ -74,4 +80,56 @@ transition DrainContractBalance(amt: Uint128)
     TransferFunds addfunds_tag bal _sender;
     e = { _eventname: "DrainContractBalance"; to: _sender; amount: amt};
     event e
+end
+(* Add funds to the contract *)
+transition AddFunds()
+    accept;
+    e = { _eventname : "Funds deposit "; funder : _sender };
+    event e
+end
+(* only if is admin  *)
+transition PayRegisteredProject(beneficiary: ByStr20)
+    IsAdmin _sender;
+    maybe_payments <- beneficiary_to_payments[beneficiary];
+    match maybe_payments with
+    | Some payments =>
+        (* take payment from the head of the list *)
+        maybe_head = uint128_list_head payments;
+        match maybe_head with
+        | Some amt =>
+            (* send payment to beneficiary *)
+            TransferFunds addfunds_tag amt beneficiary;
+            e = { _eventname : "PayRegisteredProject"; beneficiary: beneficiary; amount: amt};
+            event e;
+            maybe_tail = uint128_list_tail payments;
+            (* remove the sent payment from payments list in the map *)
+            match maybe_tail with
+            | Some remaining_payments => 
+                beneficiary_to_payments[beneficiary] := remaining_payments
+            | None =>
+                beneficiary_to_payments[beneficiary] := nil_uint128
+            end
+        | None =>
+            e = BeneficiaryPaymentsExhausted;
+            ThrowError e
+        end
+    | None =>
+        e = ProjectNotRegistered;
+        ThrowError e
+    end
+end
+(* only if is admin  *)
+(* can register beneficiary only once! *)
+transition RegisterBeneficiary(beneficiary: ByStr20, payments: List Uint128)
+    IsAdmin _sender;
+    maybe_payments <- beneficiary_to_payments[beneficiary];
+    match maybe_payments with
+    | Some some_already_registered_payments => 
+        e = BeneficiaryAlreadyRegistered;
+        ThrowError e
+    | None => 
+        beneficiary_to_payments[beneficiary] := payments;
+        e = { _eventname : "RegisterBeneficiary"; beneficiary: beneficiary; payments: payments};
+        event e
+    end
 end
